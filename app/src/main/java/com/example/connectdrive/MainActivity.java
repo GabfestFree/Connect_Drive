@@ -19,8 +19,15 @@ public class MainActivity extends AppCompatActivity {
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(MainActivity.this,Navigation_Activity.class);
-                startActivity(i);
+                Intent gotologin=new Intent(MainActivity.this,Login_Activity.class);
+                startActivity(gotologin);
+            }
+        });
+        register_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoregister=new Intent(MainActivity.this,Register_Activity.class);
+                startActivity(gotoregister);
             }
         });
     }
