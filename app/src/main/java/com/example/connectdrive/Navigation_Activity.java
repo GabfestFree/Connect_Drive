@@ -86,6 +86,8 @@ public class Navigation_Activity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        String title = getString(R.string.app_name);
+
       //Items are added
         if (id == R.id.gab_Gmail) {
             Gmail_Fragment fragment = new Gmail_Fragment();
@@ -93,7 +95,10 @@ public class Navigation_Activity extends AppCompatActivity
                     getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, fragment);
             fragmentTransaction.commit();
-            // Handle the camera action
+
+            title = "Gmail";
+
+
         } else if (id == R.id.gab_Ymail) {
             Yahoo_Fragment fragment = new Yahoo_Fragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction =
@@ -101,9 +106,16 @@ public class Navigation_Activity extends AppCompatActivity
             fragmentTransaction.replace(R.id.fragment_container, fragment);
             fragmentTransaction.commit();
 
+            title = "Ymail";
+
         } else if (id == R.id.gab_Hotmail) {
 
+            title = "Hotmail";
 
+        }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
