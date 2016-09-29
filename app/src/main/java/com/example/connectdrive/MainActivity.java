@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent gotologin=new Intent(MainActivity.this,Login_Activity.class);
                 startActivity(gotologin);
+                finish();
             }
         });
         register_button.setOnClickListener(new View.OnClickListener() {
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent gotoregister=new Intent(MainActivity.this,Register_Activity.class);
                 startActivity(gotoregister);
+                finish();
             }
         });
     }

@@ -7,6 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -22,7 +27,9 @@ public class Gmail_Fragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+ ListView filelist;
+    ArrayAdapter adapter;
+    ArrayList<String> files;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -57,14 +64,48 @@ public class Gmail_Fragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
+
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view=inflater.inflate(R.layout.fragment_gmail_, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gmail_, container, false);
+       filelist=(ListView)view.findViewById(R.id.gmaillistview);
+        files=new ArrayList<String>();
+        files.add("Photos");
+        files.add("Videos");
+        files.add("Pdf");
+        files.add("Docs");
+        files.add("Others");
+        adapter=new ArrayAdapter(getActivity(),android.R.layout.simple_list_item_1,files);
+
+        filelist.setAdapter(adapter);
+        filelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getActivity(),"Your select item is"+files.get(position),Toast.LENGTH_SHORT).show();
+                Bundle bundle=new Bundle();
+                bundle.putString("FileType",files.get(position));
+                Files fragment = new Files();
+                fragment.setArguments(bundle);
+                android.support.v4.app.FragmentTransaction fragmentTransaction =
+                        getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container,fragment);
+                fragmentTransaction.addToBackStack("Files");
+                fragmentTransaction.commit();
+
+            }
+        });
+
+        return view;
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

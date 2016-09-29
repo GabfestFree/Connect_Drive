@@ -45,7 +45,7 @@ public class Database_Service extends Service {
 
     /** method for clients */
     public String loginvalid(String user,String pass) {
-        String login_url = "http://192.168.1.3/myfirst.php";
+        String login_url = "http://192.168.1.6/myfirst.php";
         try {
             String user_name = user;
             String password = pass;
@@ -82,7 +82,7 @@ public class Database_Service extends Service {
 
 
     public String storedb(String firstname, String lastname, String email, String phone,String pass) {
-        String login_url = "http://192.168.1.3/ConnectRegister.php";
+        String login_url = "http://192.168.1.6/ConnectRegister.php";
         try {
             String first_name = firstname;
             String last_name=lastname;

@@ -72,6 +72,7 @@ public class Register_Activity extends AppCompatActivity {
                 if(result.equals("Success")) {
                     Intent gotonavigation = new Intent(getApplicationContext(), Navigation_Activity.class);
                     startActivity(gotonavigation);
+                    finish();
                 }
                 else
                 {

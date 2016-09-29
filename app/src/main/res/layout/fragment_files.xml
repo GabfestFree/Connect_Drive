@@ -2,14 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.connectdrive.Gmail_Fragment"
-    android:background="@color/accent_material_dark">
+    tools:context="com.example.connectdrive.Files">
 
     <!-- TODO: Update blank fragment layout -->
 
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/gmaillistview"
-        android:layout_gravity="left|top" />
+        android:id="@+id/files_list_view"
+        android:layout_gravity="left|top"
+        android:headerDividersEnabled="true" />
 </FrameLayout>

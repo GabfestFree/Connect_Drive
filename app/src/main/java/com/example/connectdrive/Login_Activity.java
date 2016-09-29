@@ -43,10 +43,10 @@ public class Login_Activity extends AppCompatActivity {
                 login_username=login_user_name.getText().toString();
                 login_password=login_pass_word.getText().toString();
                 String result = mService.loginvalid(login_username, login_password);
-                Log.i("Login Status",result);
                 if(result.equals("success")) {
                     Intent gotonavigation = new Intent(getApplicationContext(), Navigation_Activity.class);
                     startActivity(gotonavigation);
+                    finish();
                 }
                 else
                 {
