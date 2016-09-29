@@ -20,7 +20,7 @@
         android:textSize="40dp"
         android:gravity="center"
         android:textStyle="bold|italic"
-        android:textColor="@color/button_material_light"
+        android:textColor="#ffffff"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="174dp" />
