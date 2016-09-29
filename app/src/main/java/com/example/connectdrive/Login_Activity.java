@@ -35,13 +35,14 @@ public class Login_Activity extends AppCompatActivity {
         }
         login_user_name=(EditText)findViewById(R.id.logi_user_name);
         login_pass_word=(EditText)findViewById(R.id.login_pass_word);
-        login_username=login_user_name.getText().toString();
-        login_password=login_pass_word.getText().toString();
+
         user_login_button=(Button) findViewById(R.id.userloginbutton);
        user_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String result = mService.getRandomNumber("manikandan", "7639965633");
+                login_username=login_user_name.getText().toString();
+                login_password=login_pass_word.getText().toString();
+                String result = mService.loginvalid(login_username, login_password);
                 Log.i("Login Status",result);
                 if(result.equals("success")) {
                     Intent gotonavigation = new Intent(getApplicationContext(), Navigation_Activity.class);

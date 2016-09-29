@@ -44,7 +44,7 @@ public class Database_Service extends Service {
 
 
     /** method for clients */
-    public String getRandomNumber(String user,String pass) {
+    public String loginvalid(String user,String pass) {
         String login_url = "http://192.168.1.3/myfirst.php";
         try {
             String user_name = user;
@@ -80,6 +80,45 @@ public class Database_Service extends Service {
         return null;
     }
 
+
+    public String storedb(String firstname, String lastname, String email, String phone,String pass) {
+        String login_url = "http://192.168.1.3/ConnectRegister.php";
+        try {
+            String first_name = firstname;
+            String last_name=lastname;
+            String user_email=email;
+          String user_phone=phone;
+            String password = pass;
+            URL url = new URL(login_url);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setDoOutput(true);
+            OutputStream outputStream = httpURLConnection.getOutputStream();
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+            String post_data = URLEncoder.encode("first_name", "UTF-8") + "=" + URLEncoder.encode(first_name, "UTF-8") + "&" + URLEncoder.encode("last_name", "UTF-8") + "=" + URLEncoder.encode(last_name, "UTF-8")+ "&" + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(user_email, "UTF-8")+ "&" + URLEncoder.encode("phone", "UTF-8") + "=" + URLEncoder.encode(user_phone, "UTF-8")+ "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
+            bufferedWriter.write(post_data);
+            bufferedWriter.flush();
+            bufferedWriter.close();
+            outputStream.close();
+            InputStream inputStream = httpURLConnection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
+            String result = "";
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                result += line;
+            }
+            bufferedReader.close();
+            inputStream.close();
+            httpURLConnection.disconnect();
+            return result;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
 
