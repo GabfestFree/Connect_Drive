@@ -36,7 +36,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/uname"
+            android:id="@+id/logi_user_name"
             android:hint="Username"
             android:layout_margin="6dp"
             android:textColor="@color/material_grey_100"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:id="@+id/password"
+            android:id="@+id/login_pass_word"
             android:hint="Password"
             android:layout_margin="6dp"
             android:textColor="@color/material_grey_100"
