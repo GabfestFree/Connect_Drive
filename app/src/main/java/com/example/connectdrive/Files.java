@@ -47,7 +47,7 @@ ArrayList<String> listfile;
             filelistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getActivity(),"Download "+listfile.get(position),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(),"Downloaded "+listfile.get(position),Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -62,7 +62,7 @@ ArrayList<String> listfile;
             filelistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getActivity(),"Download "+listfile.get(position),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(),"Downloaded "+listfile.get(position),Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -80,7 +80,7 @@ ArrayList<String> listfile;
                      filelistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                          @Override
                          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                             Toast.makeText(getActivity(),"Download "+listfile.get(position),Toast.LENGTH_LONG).show();
+                             Toast.makeText(getActivity(),"Downloaded "+listfile.get(position),Toast.LENGTH_LONG).show();
                          }
                      });
 
@@ -99,7 +99,7 @@ ArrayList<String> listfile;
             filelistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getActivity(),"Download "+listfile.get(position),Toast.LENGTH_LONG);
+                    Toast.makeText(getActivity(),"Downloaded "+listfile.get(position),Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -118,7 +118,7 @@ ArrayList<String> listfile;
             filelistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getActivity(),"Download "+listfile.get(position),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(),"Downloaded "+listfile.get(position),Toast.LENGTH_LONG).show();
                 }
             });
         }

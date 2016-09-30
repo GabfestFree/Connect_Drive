@@ -4,9 +4,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +20,8 @@ public class Login_Activity extends AppCompatActivity {
     public Database_Service mService;
     boolean mBound = false;
     Intent gotoserviceintent;
-
+    static int userid=1;
+    static  SharedPreferences prefs;
    Button user_login_button;
     EditText login_user_name;
     EditText login_pass_word;
@@ -44,6 +47,8 @@ public class Login_Activity extends AppCompatActivity {
                 login_password=login_pass_word.getText().toString();
                 String result = mService.loginvalid(login_username, login_password);
                 if(result.equals("success")) {
+                    prefs = PreferenceManager.getDefaultSharedPreferences(Login_Activity.this);
+                    prefs.edit().putInt("userid",userid).commit();
                     Intent gotonavigation = new Intent(getApplicationContext(), Navigation_Activity.class);
                     startActivity(gotonavigation);
                     finish();

@@ -5,10 +5,12 @@
     tools:context="com.example.connectdrive.Yahoo_Fragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:id="@+id/yahootext" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="103dp"
+        android:text="Coming Soon"
+        android:layout_gravity="center"
+        android:textSize="50sp"
+        android:textColor="#fb8e3a" />
 </FrameLayout>
