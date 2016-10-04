@@ -45,16 +45,16 @@ public class Login_Activity extends AppCompatActivity {
             public void onClick(View v) {
                 login_username=login_user_name.getText().toString();
                 login_password=login_pass_word.getText().toString();
-                String result = mService.loginvalid(login_username, login_password);
-                if(result.equals("success")) {
+               String result = mService.loginvalid(login_username, login_password);
+               if(result.equals("success")) {
                     prefs = PreferenceManager.getDefaultSharedPreferences(Login_Activity.this);
                     prefs.edit().putInt("userid",userid).commit();
                     Intent gotonavigation = new Intent(getApplicationContext(), Navigation_Activity.class);
                     startActivity(gotonavigation);
                     finish();
-                }
-                else
-                {
+                 }
+               else
+               {
                     Log.i("Login Status",result);
                 }
             }

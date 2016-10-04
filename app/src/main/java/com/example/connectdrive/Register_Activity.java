@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,8 +69,8 @@ public class Register_Activity extends AppCompatActivity {
                 emailid=emailtext.getText().toString();
                 phonenum=phonetext.getText().toString();
                 passwordd=passwordtext.getText().toString();
-               String result = mService.storedb(firstname,lastname,emailid,phonenum,passwordd);
-                if(result.equals("Success")) {
+                String result = mService.storedb(firstname,lastname,emailid,phonenum,passwordd);
+               if(result.equals("Success")) {
                Login_Activity.prefs = PreferenceManager.getDefaultSharedPreferences(Register_Activity.this);
                 Login_Activity.prefs.edit().putInt("userid",Login_Activity.userid).commit();
                     Intent gotonavigation = new Intent(getApplicationContext(), Navigation_Activity.class);
@@ -78,7 +79,7 @@ public class Register_Activity extends AppCompatActivity {
                 }
                else
                 {
-                    //Log.i("Login Status",result);
+                  Log.i("Login Status",result);
                 }
             }
         });

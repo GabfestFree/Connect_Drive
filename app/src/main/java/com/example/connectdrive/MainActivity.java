@@ -1,9 +1,14 @@
 package com.example.connectdrive;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
        Login_Activity.prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         Userid= Login_Activity.prefs.getInt("userid",0);
@@ -46,5 +53,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+
+
     }
+
+
 }
