@@ -12,4 +12,5 @@
     <string name="title_activity_register_">Register</string>
     <string name="profile">profile</string>
     <string name="logout">logout</string>
+    <string name="title_activity_profile">My Profile</string>
 </resources>

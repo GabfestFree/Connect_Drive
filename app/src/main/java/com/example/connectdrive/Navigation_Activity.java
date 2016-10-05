@@ -6,20 +6,32 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Navigation_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,Gmail_Fragment.OnFragmentInteractionListener,Yahoo_Fragment.OnFragmentInteractionListener {
 
     FloatingActionMenu materialDesignFAM;
+    private DatabaseReference mdatabase;
+    private FirebaseAuth firebaseAuth;
+    String titleName="";
     com.github.clans.fab.FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3, floatingActionButton4, floatingActionButton5, floatingActionButton6;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +42,9 @@ public class Navigation_Activity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
+        firebaseAuth = FirebaseAuth.getInstance();
+        mdatabase= FirebaseDatabase.getInstance().getReference();
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -88,6 +103,19 @@ public class Navigation_Activity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        mdatabase.child("Users").child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+               titleName=snapshot.child("first_name").getValue(String.class);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
     }
 
     @Override
@@ -103,9 +131,32 @@ public class Navigation_Activity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigation_, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.navigation_, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener(){
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        Gmail_Fragment.adapter.getFilter().filter(newText);
+
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+                });
+
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -120,6 +171,12 @@ public class Navigation_Activity extends AppCompatActivity
             Intent gotologin=new Intent(getApplicationContext(),Login_Activity.class);
             startActivity(gotologin);
             finish();
+        }
+        if(id==R.id.profile)
+        {
+            Intent gotoprof=new Intent(getApplicationContext(),ProfileActivity.class);
+            gotoprof.putExtra("Title", titleName);
+            startActivity(gotoprof);
         }
 
         return super.onOptionsItemSelected(item);

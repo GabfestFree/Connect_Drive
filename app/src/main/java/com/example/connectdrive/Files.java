@@ -19,9 +19,9 @@ import java.util.ArrayList;
  */
 public class Files extends Fragment {
 
-ArrayList<String> listfile;
-    ArrayAdapter adapter;
-    ListView filelistview;
+static ArrayList<String> listfile;
+    static ArrayAdapter adapter;
+   static ListView filelistview;
     public Files() {
         // Required empty public constructor
     }

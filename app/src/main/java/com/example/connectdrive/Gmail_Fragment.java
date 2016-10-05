@@ -7,11 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -27,9 +31,14 @@ public class Gmail_Fragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
- ListView filelist;
-    ArrayAdapter adapter;
-    ArrayList<String> files;
+ static ListView filelist;
+   static ArrayAdapter adapter;
+   static ArrayList<String> files;
+    HashMap<String, List<String>> Contents_category;
+    static List<String> Content_list;
+    static ExpandableListView Exp_list;
+    static ExpandableListAdapter exadapter;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -75,7 +84,23 @@ public class Gmail_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_gmail_, container, false);
+        Exp_list = (ExpandableListView) view.findViewById(R.id.exp_list);
+        Contents_category = DataProvider.getInfo();
+        Content_list = new ArrayList<String>(Contents_category.keySet());
+        exadapter = new ContentAdapter(getActivity(), Contents_category,Content_list);
+        Exp_list.setAdapter(exadapter);
+
+        Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                String selected = (String) exadapter.getChild(
+                        groupPosition, childPosition);
+                Toast.makeText(getActivity(), selected, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
         // Inflate the layout for this fragment
+      /*
        filelist=(ListView)view.findViewById(R.id.gmaillistview);
         files=new ArrayList<String>();
         files.add("Photos");
@@ -102,7 +127,7 @@ public class Gmail_Fragment extends Fragment {
 
             }
         });
-
+*/
         return view;
 
 
