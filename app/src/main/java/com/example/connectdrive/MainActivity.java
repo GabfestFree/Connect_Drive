@@ -2,31 +2,30 @@ package com.example.connectdrive;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 //main Activity
     TextView login_button;
     TextView register_button;
+  static FirebaseAuth firebaseAuth;
     int Userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseAuth = FirebaseAuth.getInstance();
 
-       Login_Activity.prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        Userid= Login_Activity.prefs.getInt("userid",0);
-        if(Userid > 0)
-        {
-          Intent gotonaviactivity=new Intent(getApplicationContext(),Navigation_Activity.class);
-            startActivity(gotonaviactivity);
+        if (firebaseAuth.getCurrentUser() != null) {
+            Intent gotonavi = new Intent(MainActivity.this, Navigation_Activity.class);
+            startActivity(gotonavi);
             finish();
-        }
-        else {
+        } else {
             login_button = (TextView) findViewById(R.id.login_button);
             register_button = (TextView) findViewById(R.id.register_button);
             login_button.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 }
             });
+
         }
     }
 }

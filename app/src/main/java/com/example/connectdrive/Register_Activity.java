@@ -1,5 +1,6 @@
 package com.example.connectdrive;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -7,18 +8,26 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-public class Register_Activity extends AppCompatActivity {
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+public class Register_Activity extends AppCompatActivity implements View.OnClickListener{
 
     public Database_Service mService;
+    private ProgressDialog process;
     boolean mBound = false;
     Intent gotoserviceintent;
     Button register_register_button;
@@ -32,6 +41,10 @@ public class Register_Activity extends AppCompatActivity {
     String emailid;
     String phonenum;
     String passwordd;
+    private FirebaseAuth firebaseAuth;
+
+
+    String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,41 +61,72 @@ public class Register_Activity extends AppCompatActivity {
         emailtext=(EditText)findViewById(R.id.emailtext);
         phonetext=(EditText)findViewById(R.id.phonetext);
         passwordtext=(EditText)findViewById(R.id.passwordtext);
+        firebaseAuth=FirebaseAuth.getInstance();
+        process=new ProgressDialog(this);
 
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         register_register_button=(Button) findViewById(R.id.registe_register_button);
-        register_register_button.setOnClickListener(new View.OnClickListener() {
+        register_register_button.setOnClickListener(this);
+    }
+
+    private void register() {
+        firstname=firstnametext.getText().toString().trim();
+        lastname=lastnametext.getText().toString().trim();
+        emailid=emailtext.getText().toString().trim();
+        phonenum=phonetext.getText().toString().trim();
+        passwordd=passwordtext.getText().toString().trim();
+        if (TextUtils.isEmpty(emailid)) {
+            Toast.makeText(this, "Please enter Email", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(passwordd)) {
+            Toast.makeText(this, "Please enter password", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(firstname)) {
+            Toast.makeText(this, "Please Enter First Name", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(phonenum)) {
+            Toast.makeText(this, "Please Enter Phone Number", Toast.LENGTH_LONG).show();
+            return;
+        }
+        process.setMessage("Registering...");
+        process.show();
+        firebaseAuth.createUserWithEmailAndPassword(emailid,passwordd).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
-            public void onClick(View v) {
-                firstname=firstnametext.getText().toString();
-                lastname=lastnametext.getText().toString();
-                emailid=emailtext.getText().toString();
-                phonenum=phonetext.getText().toString();
-                passwordd=passwordtext.getText().toString();
-               String result = mService.storedb(firstname,lastname,emailid,phonenum,passwordd);
-                if(result.equals("Success")) {
-               Login_Activity.prefs = PreferenceManager.getDefaultSharedPreferences(Register_Activity.this);
-                Login_Activity.prefs.edit().putInt("userid",Login_Activity.userid).commit();
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if(task.isSuccessful()){
+                    process.dismiss();
+                    uid=firebaseAuth.getCurrentUser().getUid();
+                    DatabaseReference  mchild= FirebaseDatabase.getInstance().getReference().child("Users");
+                    DatabaseReference nextchild=mchild.child(uid);
+                    nextchild.child("email_id").setValue(emailid);
+                   nextchild.child("Password").setValue(passwordd);
+                    nextchild.child("first_name").setValue(firstname);
+                    nextchild.child("last_name").setValue(lastname);
+                  nextchild.child("phone").setValue(phonenum);
+                    process.dismiss();
                     Intent gotonavigation = new Intent(getApplicationContext(), Navigation_Activity.class);
                     startActivity(gotonavigation);
+                    process.dismiss();
                     finish();
+
+
                 }
-               else
+                else
                 {
-                    //Log.i("Login Status",result);
+                    Toast.makeText(getApplicationContext(),"Registering Failed", Toast.LENGTH_LONG).show();
                 }
+
             }
+
         });
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -116,6 +160,11 @@ public class Register_Activity extends AppCompatActivity {
             mBound = false;
         }
     };
+
+    @Override
+    public void onClick(View v) {
+        register();
+    }
 }
 
 

@@ -4,120 +4,88 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Random;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.concurrent.Executor;
 
 public class Database_Service extends Service {
     private final IBinder mBinder = new LocalBinder();
     String username;
     String password;
-    // Random number generator
-    private final Random mGenerator = new Random();
+   private FirebaseAuth firebaseAuth;
+    private DatabaseReference mchild;
+    String result=null;
 
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
     public class LocalBinder extends Binder {
        Database_Service getService() {
-            // Return this instance of LocalService so clients can call public methods
             return Database_Service.this;
         }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+        firebaseAuth = FirebaseAuth.getInstance();
+        mchild= FirebaseDatabase.getInstance().getReference().child("Users");
         username=intent.getStringExtra("username");
         return mBinder;
     }
 
-
-    /** method for clients */
     public String loginvalid(String user,String pass) {
-        String login_url = "http://192.168.1.6/myfirst.php";
-        try {
-            String user_name = user;
-            String password = pass;
-            URL url = new URL(login_url);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setDoOutput(true);
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            String post_data = URLEncoder.encode("user_name", "UTF-8") + "=" + URLEncoder.encode(user_name, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
-            bufferedWriter.write(post_data);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            outputStream.close();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
-            String result = "";
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                result += line;
-            }
-            bufferedReader.close();
-            inputStream.close();
-            httpURLConnection.disconnect();
-            return result;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+
+        firebaseAuth.signInWithEmailAndPassword(user,pass).addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        if(task.isSuccessful()){
+                             result="success";
+
+                        }
+                    }
+
+                });
+
+        return result;
     }
 
 
     public String storedb(String firstname, String lastname, String email, String phone,String pass) {
-        String login_url = "http://192.168.1.6/ConnectRegister.php";
-        try {
-            String first_name = firstname;
-            String last_name=lastname;
-            String user_email=email;
-          String user_phone=phone;
-            String password = pass;
-            URL url = new URL(login_url);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setDoOutput(true);
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            String post_data = URLEncoder.encode("first_name", "UTF-8") + "=" + URLEncoder.encode(first_name, "UTF-8") + "&" + URLEncoder.encode("last_name", "UTF-8") + "=" + URLEncoder.encode(last_name, "UTF-8")+ "&" + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(user_email, "UTF-8")+ "&" + URLEncoder.encode("phone", "UTF-8") + "=" + URLEncoder.encode(user_phone, "UTF-8")+ "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
-            bufferedWriter.write(post_data);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            outputStream.close();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
-            String result = "";
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                result += line;
+
+            final String first_name = firstname;
+            final String last_name=lastname;
+            final String user_email=email;
+          final String user_phone=phone;
+            final String password = pass;
+        firebaseAuth.createUserWithEmailAndPassword(user_email,password).addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if(task.isSuccessful()){
+                    //start the profile activity
+                    //startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                    //Toast.makeText(getApplicationContext(),"Please enter email",Toast.LENGTH_LONG).show();
+                    String uid=firebaseAuth.getCurrentUser().getUid();
+                   DatabaseReference nextchild=  mchild.child(uid);
+                    nextchild.child("email_id").setValue(user_email);
+                    nextchild.child("Password").setValue(password);
+                    nextchild.child("first_name").setValue(first_name);
+                    nextchild.child("last_name").setValue(last_name);
+                    nextchild.child("phone").setValue(user_phone);
+                    result="success";
+
+                }
+
             }
-            bufferedReader.close();
-            inputStream.close();
-            httpURLConnection.disconnect();
-            return result;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+
+        });
+
+        return result;
     }
 
 

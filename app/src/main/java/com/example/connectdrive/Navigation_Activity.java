@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -117,8 +116,7 @@ public class Navigation_Activity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.logout) {
-            Login_Activity.prefs = PreferenceManager.getDefaultSharedPreferences(Navigation_Activity.this);
-            Login_Activity.prefs.edit().clear().commit();
+            MainActivity.firebaseAuth.signOut();
             Intent gotologin=new Intent(getApplicationContext(),Login_Activity.class);
             startActivity(gotologin);
             finish();

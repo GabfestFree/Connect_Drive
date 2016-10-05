@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "960915322790",
+    "firebase_url": "https://connect-drive-d1db0.firebaseio.com",
+    "project_id": "connect-drive-d1db0",
+    "storage_bucket": "connect-drive-d1db0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960915322790:android:ef89e119847e600f",
+        "android_client_info": {
+          "package_name": "com.example.connectdrive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960915322790-k88lhpj3n4srsn3ii3n1c8vil03n5env.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.connectdrive",
+            "certificate_hash": "6510BA357DEA80351E0DAB717714F188E23E1034"
+          }
+        },
+        {
+          "client_id": "960915322790-e7mbuct3dv3a65mf37476s28768v1s40.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMce4S9TOW440Gh-wNLlgufBJ--VAGpXI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960915322790-e7mbuct3dv3a65mf37476s28768v1s40.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
