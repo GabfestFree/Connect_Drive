@@ -14,9 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -30,6 +33,14 @@ import java.util.ArrayList;
 public class Gmail_Fragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+    HashMap<String, List<String>> Contents_category;
+   static List<String> Content_list;
+   static ExpandableListView Exp_list;
+    static ContentAdapter exadapter;
+
+
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
  static ListView filelist;
@@ -66,6 +77,7 @@ public class Gmail_Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -80,8 +92,16 @@ public class Gmail_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_gmail_, container, false);
+
+        Exp_list = (ExpandableListView) view.findViewById(R.id.exp_list);
+        Contents_category = DataProvider.getInfo();
+        Content_list = new ArrayList<String>(Contents_category.keySet());
+        exadapter = new ContentAdapter(getActivity(), Contents_category,Content_list);
+        Exp_list.setAdapter(exadapter);
+
+
         // Inflate the layout for this fragment
-       filelist=(ListView)view.findViewById(R.id.gmaillistview);
+      /* filelist=(ListView)view.findViewById(R.id.gmaillistview);
         files=new ArrayList<String>();
         files.add("Photos");
         files.add("Videos");
@@ -107,6 +127,7 @@ public class Gmail_Fragment extends Fragment {
 
             }
         });
+        */
 
         return view;
 

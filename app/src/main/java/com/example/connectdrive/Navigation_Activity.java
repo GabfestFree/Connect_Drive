@@ -117,7 +117,7 @@ public class Navigation_Activity extends AppCompatActivity
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         Gmail_Fragment.adapter.getFilter().filter(newText);
-                        Files.adapter.getFilter().filter(newText);
+                       // Files.adapter.getFilter().filter(newText);
                         return true;
                     }
 
