@@ -83,6 +83,7 @@ public class Login_Activity extends AppCompatActivity implements View.OnClickLis
                 }
                 else
                 {
+                    process.dismiss();
                     Toast.makeText(getApplicationContext(),"Login Failed",Toast.LENGTH_SHORT).show();
                 }
             }

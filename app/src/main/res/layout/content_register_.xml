@@ -1,4 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#f79036">
+
+    <ImageView
+        android:layout_width="102dp"
+        android:layout_height="75dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/gabfestlogo"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="55dp" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/firstname"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <EditText
+            android:id="@+id/firstnametext"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="First Name"
+            android:textColorHint="#fcf9f9"
+            android:textColor="#ffffff"
+            android:inputType="textPersonName" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/lastname"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <EditText
+            android:id="@+id/lastnametext"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Last Name"
+            android:textColorHint="#ffffff"
+            android:textColor="#ffffff"
+            android:inputType="textPersonName" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/email_address"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <EditText
+            android:id="@+id/emailtext"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Email Address"
+            android:textColorHint="#ffffff"
+            android:textColor="#ffffff"
+            android:inputType="textEmailAddress" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/password"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <EditText
+            android:id="@+id/passwordtext"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Password"
+            android:textColorHint="#ffffff"
+            android:textColor="#ffffff"
+            android:inputType="textPassword" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/regphone"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <EditText
+            android:id="@+id/phonetext"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textColorHint="#ffffff"
+            android:textColor="#ffffff"
+            android:hint="Phone Number" />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:background="#e7f9c9"
+        android:text="Sign Up"
+        android:id="@+id/registe_register_button"
+        android:textColor="#0e0d0d" />
+
+</LinearLayout>
+<!--
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -120,3 +238,4 @@
     </LinearLayout>
 
 </RelativeLayout>
+-->

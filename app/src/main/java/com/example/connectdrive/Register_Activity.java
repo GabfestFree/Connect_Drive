@@ -119,6 +119,7 @@ public class Register_Activity extends AppCompatActivity implements View.OnClick
                 }
                 else
                 {
+                    process.dismiss();
                     Toast.makeText(getApplicationContext(),"Registering Failed", Toast.LENGTH_LONG).show();
                 }
 

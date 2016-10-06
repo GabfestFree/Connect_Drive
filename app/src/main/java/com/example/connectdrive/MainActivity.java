@@ -18,9 +18,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
-
         if (firebaseAuth.getCurrentUser() != null) {
             Intent gotonavi = new Intent(MainActivity.this, Navigation_Activity.class);
             startActivity(gotonavi);
