@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class Gmail_Fragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
  static ListView filelist;
    static ArrayAdapter adapter;
+    TextView textView;
    static ArrayList<String> files;
     HashMap<String, List<String>> Contents_category;
     static List<String> Content_list;
@@ -82,7 +84,7 @@ public class Gmail_Fragment extends Fragment {
         Content_list = new ArrayList<String>(Contents_category.keySet());
         exadapter = new ContentAdapter(getActivity(), Contents_category,Content_list);
         Exp_list.setAdapter(exadapter);
-
+        textView=(TextView)getActivity().findViewById(R.id.firstnametext);
         Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
