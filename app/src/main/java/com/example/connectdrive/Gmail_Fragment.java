@@ -92,38 +92,7 @@ public class Gmail_Fragment extends Fragment {
                 return true;
             }
         });
-        // Inflate the layout for this fragment
-      /*
-       filelist=(ListView)view.findViewById(R.id.gmaillistview);
-        files=new ArrayList<String>();
-        files.add("Photos");
-        files.add("Videos");
-        files.add("Pdf");
-        files.add("Docs");
-        files.add("Others");
-        adapter=new ArrayAdapter(getActivity(),android.R.layout.simple_list_item_1,files);
-
-        filelist.setAdapter(adapter);
-        filelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getActivity(),"Your select item is"+files.get(position),Toast.LENGTH_SHORT).show();
-                Bundle bundle=new Bundle();
-                bundle.putString("FileType",files.get(position));
-                Files fragment = new Files();
-                fragment.setArguments(bundle);
-                android.support.v4.app.FragmentTransaction fragmentTransaction =
-                        getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container,fragment);
-                fragmentTransaction.addToBackStack("Files");
-                fragmentTransaction.commit();
-
-            }
-        });
-*/
         return view;
-
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
