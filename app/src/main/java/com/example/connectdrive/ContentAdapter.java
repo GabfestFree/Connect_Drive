@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -74,7 +75,33 @@ public class ContentAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             ListView = infalInflater.inflate(R.layout.parent_layout,null);
         }
-        TextView item = (TextView) ListView.findViewById(R.id.parent_txt);
+        TextView item = (TextView) ListView.findViewById(R.id.folderView);
+        ImageView folder=(ImageView) ListView.findViewById(R.id.fileiconview);
+        if(CoursesFull.equals("Photos"))
+        {
+
+           folder.setImageResource(R.drawable.ic_photo_library_black_24dp);
+        }
+        if(CoursesFull.equals("Videos"))
+        {
+
+            folder.setImageResource(R.drawable.ic_video_library_black_24dp);
+        }
+        if(CoursesFull.equals("Docs"))
+        {
+
+            folder.setImageResource(R.drawable.ic_note_black_24dp);
+        }
+        if(CoursesFull.equals("Pdf"))
+        {
+
+            folder.setImageResource(R.drawable.ic_picture_as_pdf_black_24dp);
+        }
+        if(CoursesFull.equals("Others"))
+        {
+
+            folder.setImageResource(R.drawable.ic_queue_black_24dp);
+        }
         item.setText(CoursesFull);
         return ListView;
     }

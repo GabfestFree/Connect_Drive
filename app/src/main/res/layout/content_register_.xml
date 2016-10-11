@@ -101,10 +101,29 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:hint="Phone Number"
+            android:textColorHint="#fcf9f9"
+            android:textColor="#ffffff"
+            android:inputType="phone" />
+    </android.support.design.widget.TextInputLayout>
+  <!--  <android.support.design.widget.TextInputLayout
+        android:id="@+id/regphone"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <EditText
+            android:id="@+id/phonetext"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
             android:textColorHint="#ffffff"
             android:textColor="#ffffff"
             android:hint="Phone Number" />
     </android.support.design.widget.TextInputLayout>
+    -->
 
     <Button
         android:layout_width="fill_parent"
