@@ -1,6 +1,7 @@
 package com.example.connectdrive;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,6 +40,7 @@ public class Gmail_Fragment extends Fragment {
     static List<String> Content_list;
     static ExpandableListView Exp_list;
     static ExpandableListAdapter exadapter;
+    private int lastExpandedPosition = -1;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -64,6 +66,7 @@ public class Gmail_Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -92,6 +95,17 @@ public class Gmail_Fragment extends Fragment {
                 return true;
             }
         });
+        Exp_list.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (lastExpandedPosition != -1
+                        && groupPosition != lastExpandedPosition) {
+                    Exp_list.collapseGroup(lastExpandedPosition);
+                }
+                lastExpandedPosition = groupPosition;
+            }
+        });
+
         return view;
     }
 
@@ -124,6 +138,7 @@ public class Gmail_Fragment extends Fragment {
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -139,3 +154,4 @@ public class Gmail_Fragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
+

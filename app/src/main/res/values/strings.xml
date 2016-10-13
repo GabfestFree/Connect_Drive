@@ -13,4 +13,5 @@
     <string name="profile">profile</string>
     <string name="logout">logout</string>
     <string name="title_activity_profile">My Profile</string>
+    <string name="Login">Login</string>
 </resources>

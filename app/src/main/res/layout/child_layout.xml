@@ -1,17 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:padding="5dip" >
 
+    <!--  ListRow Left sied Thumbnail image -->
+
+    <!-- Title Of Song-->
     <TextView
-        android:layout_width="fill_parent"
+        android:id="@+id/folderView1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/child_txt"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
-        android:textColor="#6b5949"
-        android:textSize="20sp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        />
+        android:textColor="#040404"
+        android:typeface="sans"
+        android:textSize="15dip"
+        android:textStyle="bold"
+        android:text="sddfs"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/fileiconview1"
+        android:layout_marginLeft="15dp" />
 
-</LinearLayout>
+    <!-- Artist Name -->
+
+    <!-- Rightend Duration -->
+
+    <!-- Rightend Arrow -->
+    <ImageView android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/download_icon"
+        android:layout_marginRight="15dp"
+        android:layout_alignBottom="@+id/fileiconview1"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="21dp"
+        android:id="@+id/downloadButton"
+        android:onClick="downloadContent" />
+
+    <ImageView
+        android:id="@+id/fileiconview1"
+        android:layout_width="30dip"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp" />
+
+</RelativeLayout>
