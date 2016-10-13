@@ -8,15 +8,16 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.connectdrive.MainActivity"
-    android:background="@drawable/img3"
+    android:background="#f79036"
     android:clickable="false">
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ConnectDrive"
         android:typeface="serif"
-        android:id="@+id/textView2"
+        android:id="@+id/textView3"
         android:textSize="40dp"
         android:gravity="center"
         android:textStyle="bold|italic"
@@ -30,12 +31,13 @@
         android:layout_height="wrap_content"
         android:text="REGISTER"
         android:id="@+id/register_button"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/textView2"
         android:background="#3a1b05"
         android:textColor="#ffffff"
         android:paddingLeft="30dp"
-        android:paddingRight="30dp" />
+        android:paddingRight="30dp"
+        android:layout_gravity="right"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView3" />
 
     <Button
         android:layout_width="wrap_content"
@@ -47,9 +49,7 @@
         android:textColor="#f7f7fc"
         android:paddingLeft="30dp"
         android:paddingRight="40dp"
-        android:layout_alignTop="@+id/register_button"
-        android:layout_alignStart="@+id/textView2"
-        android:onClick="Login" />
-
-
+        android:onClick="Login"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/textView3" />
 </RelativeLayout>

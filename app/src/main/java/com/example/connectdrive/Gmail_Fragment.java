@@ -15,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -36,12 +38,16 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Base64;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePart;
+import com.google.api.services.gmail.model.MessagePartBody;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,38 +66,42 @@ import pub.devrel.easypermissions.EasyPermissions;
  * Use the {@link Gmail_Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Gmail_Fragment extends Fragment  implements EasyPermissions.PermissionCallbacks{
+public class Gmail_Fragment extends Fragment  implements EasyPermissions.PermissionCallbacks {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
- static ListView filelist;
-   static ArrayAdapter adapter;
+    static ListView filelist;
+    static ArrayAdapter adapter;
     GoogleAccountCredential mCredential;
     int attachmentname;
+    private int lastExpandedPosition = -1;
 
-   static ArrayList<String> files;
+    static ArrayList<String> files;
     HashMap<String, List<String>> Contents_category;
     static List<String> Content_list;
     static ExpandableListView Exp_list;
     static ExpandableListAdapter exadapter;
     ProgressDialog mProgress;
-    static  List<String> attachlist;
-    static  SharedPreferences prefs;
+    static List<String> attachlist;
+    static SharedPreferences prefs;
+    String passingattachmentid = "";
+    String passingmessageid = "";
+    Base64 base64Url;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
-    static final int RESULT_OK= -1;
+    static final int RESULT_OK = -1;
 
     private static final String BUTTON_TEXT = "Call Gmail API";
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = { GmailScopes.MAIL_GOOGLE_COM };
+    private static final String[] SCOPES = {GmailScopes.MAIL_GOOGLE_COM};
     View view;
     static SQLiteDatabase connectDatabase;
     static int brefresh;
-    static int afterfresh=1;
+    static int afterfresh = 1;
     int attachid;
     int messgaeid;
 
@@ -106,7 +116,6 @@ public class Gmail_Fragment extends Fragment  implements EasyPermissions.Permiss
     public Gmail_Fragment() {
         // Required empty public constructor
     }
-
 
 
     public static Gmail_Fragment newInstance(String param1, String param2) {
@@ -134,95 +143,105 @@ public class Gmail_Fragment extends Fragment  implements EasyPermissions.Permiss
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-      view=inflater.inflate(R.layout.fragment_gmail_, container, false);
+        view = inflater.inflate(R.layout.fragment_gmail_, container, false);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 getContext());
 
-try {
-    connectDatabase = getActivity().openOrCreateDatabase("connectDB", Context.MODE_PRIVATE, null);
-    connectDatabase.execSQL("CREATE TABLE IF NOT EXISTS attachment (messageID VARCHAR,attachmentID VARCHAR,attachmentName VARCHAR)");
-}
-catch (Exception e)
-{
-   e.printStackTrace();
+        try {
+            connectDatabase = getActivity().openOrCreateDatabase("connectDB", Context.MODE_PRIVATE, null);
+            connectDatabase.execSQL("CREATE TABLE IF NOT EXISTS attachment (messageID VARCHAR,attachmentID VARCHAR,attachmentName VARCHAR)");
+        } catch (Exception e) {
+            e.printStackTrace();
 
-}
-        Gmail_Fragment.prefs=PreferenceManager.getDefaultSharedPreferences(getActivity());
-        brefresh=Gmail_Fragment.prefs.getInt("RefreshID",0);
-
-        if( brefresh == 0) {
-            alertDialogBuilder.setTitle("Sync with Your Gmail");
-
-            // set dialog message
-            alertDialogBuilder
-                    .setMessage("Do you want Access your Gmail")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                            prefs.edit().putInt("RefreshID",afterfresh).commit();
-                            try {
-                               //delete all rows in a table
-                                connectDatabase.delete("attachment",null,null);
-                            }
-                            catch(Exception e)
-                            {
-
-                            }
-                            getResultsFromApi();
-
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-
-                            dialog.cancel();
-                        }
-                    });
-
-            // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder.create();
-
-            // show it
-            alertDialog.show();
         }
+        Gmail_Fragment.prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        brefresh = Gmail_Fragment.prefs.getInt("RefreshID", 0);
 
+if(brefresh==0) {
+    alertDialogBuilder.setTitle("Sync with Your Gmail");
 
-            Exp_list = (ExpandableListView) view.findViewById(R.id.exp_list);
-            Contents_category = DataProvider.getInfo();
-            Content_list = new ArrayList<String>(Contents_category.keySet());
-            exadapter = new ContentAdapter(getActivity(), Contents_category, Content_list);
-            Exp_list.setAdapter(exadapter);
-            Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-                @Override
-                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                    String selected = (String) exadapter.getChild(
-                            groupPosition, childPosition);
-                   try {
-                       Cursor  attid= Gmail_Fragment.connectDatabase.rawQuery("SELECT DISTINCT messageID,attachmentID FROM attachment WHERE attachmentName = '"+selected+"'", null);
-                       attachid = attid.getColumnIndex("attachmentID");
-                       messgaeid=attid.getColumnIndex("messageID");
+    // set dialog message
+    alertDialogBuilder
+            .setMessage("Do you want Access your Gmail")
+            .setCancelable(false)
+            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    prefs.edit().putInt("RefreshID", afterfresh).commit();
+                    try {
+                        //delete all rows in a table
+                        connectDatabase.delete("attachment", null, null);
+                    } catch (Exception e) {
 
-                       attid.moveToFirst();
-                       while (attid != null) {
-                           Log.i("Attachment Id",attid.getString(attachid));
-                           Log.i("Message ID",attid.getString(messgaeid));
-                         //  Toast.makeText(getActivity(),"Your id"+attid.getString(attachid),Toast.LENGTH_SHORT);
-                          attid.moveToNext();
-                       }
+                    }
+                    getResultsFromApi();
 
+                }
+            })
+            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
 
-                   }
-                   catch(Exception e)
-                   {
-
-                   }
-                    return true;
+                    dialog.cancel();
                 }
             });
-            mCredential = GoogleAccountCredential.usingOAuth2(
-                    getContext(), Arrays.asList(SCOPES))
-                    .setBackOff(new ExponentialBackOff());
+
+    // create alert dialog
+    AlertDialog alertDialog = alertDialogBuilder.create();
+
+    // show it
+    alertDialog.show();
+}
+
+
+
+        Exp_list = (ExpandableListView) view.findViewById(R.id.exp_list);
+        Contents_category = DataProvider.getInfo();
+        Content_list = new ArrayList<String>(Contents_category.keySet());
+        exadapter = new ContentAdapter(getActivity(), Contents_category, Content_list);
+        Exp_list.setAdapter(exadapter);
+        Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                String selected = (String) exadapter.getChild(
+                        groupPosition, childPosition);
+                try {
+                    Cursor attid = Gmail_Fragment.connectDatabase.rawQuery("SELECT DISTINCT messageID,attachmentID FROM attachment WHERE attachmentName = '" + selected + "'", null);
+                    attachid = attid.getColumnIndex("attachmentID");
+                    messgaeid = attid.getColumnIndex("messageID");
+
+
+                    attid.moveToFirst();
+                    while (attid != null) {
+
+                        passingattachmentid = attid.getString(attachid).trim();
+                        passingmessageid = attid.getString(messgaeid).trim();
+                        Log.i("Message ID", attid.getString(messgaeid));
+                        Log.i("Attachment Id", attid.getString(attachid));
+                        //  Toast.makeText(getActivity(),"Your id"+attid.getString(attachid),Toast.LENGTH_SHORT);
+                        attid.moveToNext();
+                    }
+                    GetAttachmentfromapi(passingmessageid,selected);
+                    Toast.makeText(getActivity(),"Succesfully Downloaded",Toast.LENGTH_LONG).show();
+
+                } catch (Exception e) {
+
+                }
+                return true;
+            }
+        });
+        Exp_list.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (lastExpandedPosition != -1
+                        && groupPosition != lastExpandedPosition) {
+                    Exp_list.collapseGroup(lastExpandedPosition);
+                }
+                lastExpandedPosition = groupPosition;
+            }
+        });
+        mCredential = GoogleAccountCredential.usingOAuth2(
+                getContext(), Arrays.asList(SCOPES))
+                .setBackOff(new ExponentialBackOff());
 
         return view;
     }
@@ -280,21 +299,36 @@ catch (Exception e)
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    private void getResultsFromApi() {
+    private void GetAttachmentfromapi(String messageid,String attachname) {
+        String downmsgid=messageid;
+        String downattachname=attachname;
         if (! isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (! isDeviceOnline()) {
-           // mOutputText.setText("No network connection available.");
+            // mOutputText.setText("No network connection available.");
+        } else {
+            new GetAttachment(mCredential).execute(downmsgid,downattachname);
+        }
+    }
+
+    private void getResultsFromApi() {
+        if (!isGooglePlayServicesAvailable()) {
+            acquireGooglePlayServices();
+        } else if (mCredential.getSelectedAccountName() == null) {
+            chooseAccount();
+        } else if (!isDeviceOnline()) {
+            // mOutputText.setText("No network connection available.");
         } else {
             new MakeRequestTask(mCredential).execute();
         }
     }
+
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private void chooseAccount() {
         if (EasyPermissions.hasPermissions(
-               getContext(), android.Manifest.permission.GET_ACCOUNTS)) {
+                getContext(), android.Manifest.permission.GET_ACCOUNTS)) {
             String accountName = getActivity().getPreferences(Context.MODE_PRIVATE)
                     .getString(PREF_ACCOUNT_NAME, null);
             if (accountName != null) {
@@ -315,16 +349,17 @@ catch (Exception e)
                     android.Manifest.permission.GET_ACCOUNTS);
         }
     }
+
     @Override
     public void onActivityResult(
             int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                   // mOutputText.setText(
-                          //  "This app requires Google Play Services. Please install " +
-                               //     "Google Play Services on your device and relaunch this app.");
+                    // mOutputText.setText(
+                    //  "This app requires Google Play Services. Please install " +
+                    //     "Google Play Services on your device and relaunch this app.");
                 } else {
                     getResultsFromApi();
                 }
@@ -352,20 +387,23 @@ catch (Exception e)
                 break;
         }
     }
+
     @Override
-   public void onRequestPermissionsResult(int requestCode,
+    public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(
                 requestCode, permissions, grantResults, this);
     }
+
     private boolean isDeviceOnline() {
         ConnectivityManager connMgr =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }
+
     private boolean isGooglePlayServicesAvailable() {
         GoogleApiAvailability apiAvailability =
                 GoogleApiAvailability.getInstance();
@@ -373,6 +411,7 @@ catch (Exception e)
                 apiAvailability.isGooglePlayServicesAvailable(getActivity());
         return connectionStatusCode == ConnectionResult.SUCCESS;
     }
+
     private void acquireGooglePlayServices() {
         GoogleApiAvailability apiAvailability =
                 GoogleApiAvailability.getInstance();
@@ -382,6 +421,7 @@ catch (Exception e)
             showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
         }
     }
+
     void showGooglePlayServicesAvailabilityErrorDialog(
             final int connectionStatusCode) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
@@ -392,6 +432,7 @@ catch (Exception e)
         dialog.show();
 
     }
+
     private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
         private com.google.api.services.gmail.Gmail mService = null;
         private Exception mLastError = null;
@@ -407,6 +448,7 @@ catch (Exception e)
 
         /**
          * Background task to call Gmail API.
+         *
          * @param params no parameters needed for this task.
          */
         @Override
@@ -422,35 +464,39 @@ catch (Exception e)
 
         /**
          * Fetch a list of Gmail labels attached to the specified account.
+         *
          * @return List of Strings labels.
          * @throws IOException
          */
         private List<String> getDataFromApi() throws IOException {
             // Get the labels in the user's account.
             String user = "me";
+            int limit = 0;
             List<String> labels = new ArrayList<String>();
-           attachlist=new ArrayList<String>();
+            attachlist = new ArrayList<String>();
             ListMessagesResponse listResponse = mService.users().messages().list(user).execute();
 //                    mService.users().labels().list(user).execute();
             for (Message message : listResponse.getMessages()) {
+                if (limit <= 100) {
+                    Message msg = mService.users().messages().get(user, message.getId()).execute();
+                    //  labels.add("Msg ID: " + message.getId());
+                    com.google.api.services.gmail.model.MessagePart messagePart = msg.getPayload();
 
-                Message msg = mService.users().messages().get(user, message.getId()).execute();
-              //  labels.add("Msg ID: " + message.getId());
-                com.google.api.services.gmail.model.MessagePart messagePart = msg.getPayload();
+                    if (messagePart.getParts() != null) {
+                        List<MessagePart> parts = messagePart.getParts();
 
-                if(messagePart.getParts() != null) {
-                    List<MessagePart> parts = messagePart.getParts();
+                        for (MessagePart part : parts) {
+                            if (part.getFilename() != null && part.getFilename().length() > 0) {
 
-                    for (MessagePart part : parts) {
-                        if (part.getFilename() != null && part.getFilename().length() > 0) {
-
-                            labels.add("Attach id: " + part.getBody().getAttachmentId() + "  File Name: " + part.getFilename());
-                            attachlist.add(part.getFilename());
-                         connectDatabase.execSQL("INSERT INTO attachment (messageID,attachmentID,attachmentName) VALUES('"+message.getId()+"','"+part.getBody().getAttachmentId()+"','"+part.getFilename()+"')");
+                                labels.add("Attach id: " + part.getBody().getAttachmentId() + "  File Name: " + part.getFilename());
+                                attachlist.add(part.getFilename());
+                                connectDatabase.execSQL("INSERT INTO attachment (messageID,attachmentID,attachmentName) VALUES('" + message.getId() + "','" + part.getBody().getAttachmentId() + "','" + part.getFilename() + "')");
+                            }
                         }
                     }
-                }
 //                + "  " + mService.users().messages().get(user,message.getId()).execute().getSnippet());
+                }
+                limit++;
             }
             return labels;
         }
@@ -465,11 +511,11 @@ catch (Exception e)
         protected void onPostExecute(List<String> output) {
 
             if (output == null || output.size() == 0) {
-               // mOutputText.setText("No results returned.");
-                Log.i("No results","Returned");
+                // mOutputText.setText("No results returned.");
+                Log.i("No results", "Returned");
             } else {
 
-              // Log.i("Attchments",output.toString());
+                // Log.i("Attchments",output.toString());
 
                 try {
                     Cursor c = Gmail_Fragment.connectDatabase.rawQuery("SELECT DISTINCT attachmentName FROM attachment", null);
@@ -481,15 +527,13 @@ catch (Exception e)
                         c.moveToNext();
                     }
 
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
 
                 //  output.add(0, "Data retrieved using the Gmail API:");
-               // mOutputText.setText(TextUtils.join("\n", output));
+                // mOutputText.setText(TextUtils.join("\n", output));
             }
         }
 
@@ -505,14 +549,145 @@ catch (Exception e)
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             Gmail_Fragment.REQUEST_AUTHORIZATION);
                 } else {
-                   // mOutputText.setText("The following error occurred:\n"
-                         //   + mLastError.getMessage());
-                    Log.i("The following error occured",mLastError.getMessage());
+                    // mOutputText.setText("The following error occurred:\n"
+                    //   + mLastError.getMessage());
+                    Log.i("The following error occured", mLastError.getMessage());
                 }
             } else {
-               // mOutputText.setText("Request cancelled.");
-                Log.i("request","Cancelled");
+                // mOutputText.setText("Request cancelled.");
+                Log.i("request", "Cancelled");
             }
         }
     }
+
+
+  /*  private class GetAttachment extends  AsyncTask<String, Void, Void> {
+        private com.google.api.services.gmail.Gmail mService = null;
+        public GetAttachment(GoogleAccountCredential credential) {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            mService = new com.google.api.services.gmail.Gmail.Builder(
+                    transport, jsonFactory, credential)
+                    .setApplicationName("Gmail API Android Quickstart")
+                    .build();
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            return null;
+        }
+    }*/
+  private class GetAttachment extends  AsyncTask<String, Void, String> {
+      private com.google.api.services.gmail.Gmail mService = null;
+      private Exception mLastError = null;
+      public GetAttachment(GoogleAccountCredential credential) {
+          HttpTransport transport = AndroidHttp.newCompatibleTransport();
+          JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+          mService = new com.google.api.services.gmail.Gmail.Builder(
+                  transport, jsonFactory, credential)
+                  .setApplicationName("Gmail API Android Quickstart")
+                  .build();
+      }
+
+      @Override
+      protected String doInBackground(String... params) {
+          String msddownload=params[0];
+          String attachdownload=params[1];
+          try {
+              return getAttachments("me",msddownload,attachdownload);
+          } catch (IOException e) {
+              mLastError = e;
+              cancel(true);
+              return null;
+          }
+
+      }
+
+      @Override
+      protected void onPreExecute() {
+          super.onPreExecute();
+      }
+
+      @Override
+      protected void onPostExecute(String s) {
+          if(s.equals(null)||s.length()==0)
+          {
+              Log.i("No Result","Returned");
+          }
+          else
+          {
+              Toast.makeText(getActivity(),s,Toast.LENGTH_LONG).show();
+          }
+      }
+
+      public String getAttachments(String userId, String messageId, String filename)
+              throws IOException {
+          File myFile = new File(Environment.getExternalStorageDirectory()+filename);
+          myFile.createNewFile();
+          Message msg = mService.users().messages().get(userId, messageId).execute();
+          //  labels.add("Msg ID: " + message.getId());
+          com.google.api.services.gmail.model.MessagePart messagePart = msg.getPayload();
+
+          if(messagePart.getParts() != null) {
+              List<MessagePart> parts = messagePart.getParts();
+
+              for (MessagePart part : parts) {
+                  if (part.getFilename() != null && part.getFilename().length() > 0) {
+                      String attId = part.getBody().getAttachmentId();
+                      MessagePartBody attachPart = mService.users().messages().attachments().get(userId, messageId, attId).execute();
+                      byte[] fileByteArray = Base64.decodeBase64(attachPart.getData());
+                      FileOutputStream fileOutFile = new FileOutputStream(myFile);
+                      fileOutFile.write(fileByteArray);
+                      fileOutFile.close();
+                      Log.i("Success fully downloaded","File");
+
+                  }
+              }
+              return "Successfully Downloaded";
+          }
+          return null;
+      }
+
+      @Override
+      protected void onCancelled() {
+          super.onCancelled();
+      }
+  }
+
 }
+
+   /* public void attachmentdownload(String messageId,String attId,String filename) {
+        try {
+        String msgid=messageId;
+        String atid=attId;
+        String fileName=filename;
+        HttpTransport transport = AndroidHttp.newCompatibleTransport();
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        com.google.api.services.gmail.Gmail mService = new com.google.api.services.gmail.Gmail.Builder(
+                transport, jsonFactory, mCredential)
+                .setApplicationName("Gmail API Android Quickstart")
+                .build();
+        FileOutputStream fileOutFile = null;
+
+
+            MessagePartBody attachPart = mService.users().messages().attachments().get("me", msgid, attId).execute();
+            com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64 base64Url = new com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64(true);
+            byte[] fileByteArray = base64Url.decodeBase64(attachPart.getData());
+
+           File directory = new File(Environment.getDataDirectory().getAbsolutePath());
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+
+            fileOutFile = new FileOutputStream(directory+filename);
+            fileOutFile.write(fileByteArray);
+            fileOutFile.close();
+            Toast.makeText(getActivity(),"Succesfully Downloaded",Toast.LENGTH_LONG).show();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
+

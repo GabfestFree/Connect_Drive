@@ -1,6 +1,7 @@
 package com.example.connectdrive;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     TextView login_button;
     TextView register_button;
   static FirebaseAuth firebaseAuth;
+    static Typeface myTypeface;
     int Userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        myTypeface = Typeface.createFromAsset(getAssets(),"screengem.ttf");
+
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
             Intent gotonavi = new Intent(MainActivity.this, Navigation_Activity.class);

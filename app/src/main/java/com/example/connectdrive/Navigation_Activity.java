@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -146,6 +147,8 @@ public class Navigation_Activity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.logout) {
             MainActivity.firebaseAuth.signOut();
+            Gmail_Fragment.prefs = PreferenceManager.getDefaultSharedPreferences(Navigation_Activity.this);
+            Gmail_Fragment.prefs.edit().clear().commit();
             Intent gotologin=new Intent(getApplicationContext(),Login_Activity.class);
             startActivity(gotologin);
             finish();
