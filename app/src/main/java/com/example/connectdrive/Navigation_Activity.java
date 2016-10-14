@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
 public class Navigation_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,Gmail_Fragment.OnFragmentInteractionListener,Yahoo_Fragment.OnFragmentInteractionListener {
 
@@ -31,11 +33,23 @@ public class Navigation_Activity extends AppCompatActivity
     private DatabaseReference mdatabase;
     private FirebaseAuth firebaseAuth;
     String titleName="";
+    Handler mHandler;
+
     com.github.clans.fab.FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3, floatingActionButton4, floatingActionButton5, floatingActionButton6;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
+
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_navigation_);
+//        this.mHandler = new Handler();
+//
+//        this.mHandler.postDelayed(m_Runnable,60000);
+
         Gmail_Fragment fragment = new Gmail_Fragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction =
                 getSupportFragmentManager().beginTransaction();
@@ -116,6 +130,17 @@ public class Navigation_Activity extends AppCompatActivity
 
         });
     }
+//    private final Runnable m_Runnable = new Runnable()
+//    {
+//        public void run()
+//
+//        {
+//            Toast.makeText(Navigation_Activity.this,"in runnable", Toast.LENGTH_SHORT).show();
+//
+//            Navigation_Activity.this.mHandler.postDelayed(m_Runnable, 60000);
+//        }
+//
+//    };
 
     @Override
     public void onBackPressed() {

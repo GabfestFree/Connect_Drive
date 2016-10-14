@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -77,6 +78,7 @@ public class Gmail_Fragment extends Fragment  implements EasyPermissions.Permiss
     int attachmentname;
     private int lastExpandedPosition = -1;
 
+
     static ArrayList<String> files;
     HashMap<String, List<String>> Contents_category;
     static List<String> Content_list;
@@ -88,6 +90,7 @@ public class Gmail_Fragment extends Fragment  implements EasyPermissions.Permiss
     String passingattachmentid = "";
     String passingmessageid = "";
     Base64 base64Url;
+    Handler mHandler;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -143,9 +146,14 @@ public class Gmail_Fragment extends Fragment  implements EasyPermissions.Permiss
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         view = inflater.inflate(R.layout.fragment_gmail_, container, false);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 getContext());
+        this.mHandler = new Handler();
+
+
 
         try {
             connectDatabase = getActivity().openOrCreateDatabase("connectDB", Context.MODE_PRIVATE, null);
@@ -168,6 +176,10 @@ if(brefresh==0) {
                 public void onClick(DialogInterface dialog, int id) {
                     prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     prefs.edit().putInt("RefreshID", afterfresh).commit();
+                    Toast.makeText(getActivity(),"Please wait...1 mint",Toast.LENGTH_LONG).show();
+                    mHandler.postDelayed(m_Runnable,90000);
+
+
                     try {
                         //delete all rows in a table
                         connectDatabase.delete("attachment", null, null);
@@ -204,31 +216,32 @@ if(brefresh==0) {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 String selected = (String) exadapter.getChild(
                         groupPosition, childPosition);
-                try {
-                    Cursor attid = Gmail_Fragment.connectDatabase.rawQuery("SELECT DISTINCT messageID,attachmentID FROM attachment WHERE attachmentName = '" + selected + "'", null);
-                    attachid = attid.getColumnIndex("attachmentID");
-                    messgaeid = attid.getColumnIndex("messageID");
-
-
-                    attid.moveToFirst();
-                    while (attid != null) {
-
-                        passingattachmentid = attid.getString(attachid).trim();
-                        passingmessageid = attid.getString(messgaeid).trim();
-                        Log.i("Message ID", attid.getString(messgaeid));
-                        Log.i("Attachment Id", attid.getString(attachid));
-                        //  Toast.makeText(getActivity(),"Your id"+attid.getString(attachid),Toast.LENGTH_SHORT);
-                        attid.moveToNext();
-                    }
-                    GetAttachmentfromapi(passingmessageid,selected);
-                    Toast.makeText(getActivity(),"Succesfully Downloaded",Toast.LENGTH_LONG).show();
-
-                } catch (Exception e) {
-
-                }
-                return true;
-            }
-        });
+                Toast.makeText(getActivity(),"Downloaded "+selected,Toast.LENGTH_LONG).show();
+//                try {
+//                    Cursor attid = Gmail_Fragment.connectDatabase.rawQuery("SELECT DISTINCT messageID,attachmentID FROM attachment WHERE attachmentName = '" + selected + "'", null);
+//                    attachid = attid.getColumnIndex("attachmentID");
+//                    messgaeid = attid.getColumnIndex("messageID");
+//
+//
+//                    attid.moveToFirst();
+//                    while (attid != null) {
+//
+//                        passingattachmentid = attid.getString(attachid).trim();
+//                        passingmessageid = attid.getString(messgaeid).trim();
+//                        Log.i("Message ID", attid.getString(messgaeid));
+//                        Log.i("Attachment Id", attid.getString(attachid));
+//                        //  Toast.makeText(getActivity(),"Your id"+attid.getString(attachid),Toast.LENGTH_SHORT);
+//                        attid.moveToNext();
+//                    }
+//                    GetAttachmentfromapi(passingmessageid,selected);
+//                    Toast.makeText(getActivity(),"Succesfully Downloaded",Toast.LENGTH_LONG).show();
+//
+//                } catch (Exception e) {
+//
+//                }
+               return true;
+           }
+       });
         Exp_list.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
@@ -242,9 +255,24 @@ if(brefresh==0) {
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
+        //this.mHandler.postDelayed(m_Runnable,90000);
 
         return view;
     }
+    private final Runnable m_Runnable = new Runnable()
+    {
+        public void run()
+
+        {
+            Gmail_Fragment fragment = new Gmail_Fragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction =
+                    getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, fragment);
+            fragmentTransaction.commit();
+            Toast.makeText(getActivity(),"Refereshed",Toast.LENGTH_LONG).show();
+        }
+
+    };
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -268,6 +296,7 @@ if(brefresh==0) {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
 
     @Override
     public void onDetach() {

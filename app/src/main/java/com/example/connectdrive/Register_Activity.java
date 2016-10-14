@@ -80,8 +80,8 @@ public class Register_Activity extends AppCompatActivity implements View.OnClick
             return;
         }
 
-        if (TextUtils.isEmpty(passwordd)) {
-            Toast.makeText(this, "Please enter password", Toast.LENGTH_LONG).show();
+        if (TextUtils.isEmpty(passwordd)&& passwordd.length()< 8) {
+            Toast.makeText(this, "Please enter password or Enter atleast 8 charecters", Toast.LENGTH_LONG).show();
             return;
         }
         if (TextUtils.isEmpty(firstname)) {
